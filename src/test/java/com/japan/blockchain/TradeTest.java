@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.tron.trident.core.ApiWrapper;
 import org.tron.trident.core.exceptions.IllegalException;
-import org.tron.trident.proto.Response;
 
 /**
  * @ClassName TradeTest
@@ -40,7 +39,7 @@ public class TradeTest {
 
     @Test
         //@Disabled
-    void tradeMultiUSDTTest() throws IllegalException {
+    void tradeMultiUSDTTest() {
         SmartMultiRequest multiRequest = new SmartMultiRequest();
         multiRequest.setApiWrapper(ApiWrapper.ofNile("7f22c659d1185b475f990e7356643a84b308d9ccdbfa68b14b7fc843d46af99d"));
         multiRequest.setNetWorkType(NetWorkType.MAIN_NET);
