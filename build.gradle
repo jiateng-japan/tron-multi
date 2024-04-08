@@ -1,0 +1,70 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.2.4'
+    id 'com.google.protobuf' version '0.9.4'
+    id 'io.spring.dependency-management' version '1.1.4'
+}
+
+group = 'com.multi.sign.blockchain'
+version = '1.0.0'
+
+java {
+    withSourcesJar()
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+bootJar {
+    enabled(false)
+}
+jar {
+    enabled(true)
+    archiveClassifier = ''
+    dependsOn(clean)
+    mustRunAfter(clean)
+}
+
+dependencies {
+    //项目的基础依赖项目
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'cn.hutool:hutool-all:5.8.25'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+    implementation 'com.alibaba.fastjson2:fastjson2:2.0.47'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    //##########################################
+
+    //波场链项目依赖的protobuf & grpc
+    implementation 'com.google.protobuf:protobuf-java:3.25.2'
+    implementation 'io.grpc:grpc-netty-shaded:1.31.0'
+    implementation 'io.grpc:grpc-netty:1.31.0'
+    implementation 'io.grpc:grpc-protobuf:1.31.0'
+    implementation 'io.grpc:grpc-stub:1.31.0'
+    implementation 'com.google.guava:guava:33.0.0-jre'
+    implementation "org.bouncycastle:bcprov-jdk15on:1.70"
+    implementation 'io.grpc:grpc-okhttp:1.31.0'
+    //json parsing
+    implementation 'com.google.protobuf:protobuf-java-util:3.11.0'
+
+    //本地打包源码的trident-java依赖项目，主要是abi,core,utils三个包
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
