@@ -39,11 +39,6 @@ public class SmartMultiRequest {
     private String ownerAddress;
 
     /**
-     * 控制地址
-     */
-    private String controllerAddress;
-
-    /**
      * 收款地址
      */
     private String toAddress;

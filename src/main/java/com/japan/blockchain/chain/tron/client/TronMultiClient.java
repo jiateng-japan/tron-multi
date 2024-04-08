@@ -15,9 +15,11 @@ import org.tron.trident.abi.datatypes.Address;
 import org.tron.trident.abi.datatypes.Bool;
 import org.tron.trident.abi.datatypes.Function;
 import org.tron.trident.abi.datatypes.generated.Uint256;
+import org.tron.trident.core.ApiWrapper;
 import org.tron.trident.core.contract.Contract;
 import org.tron.trident.core.contract.Trc20Contract;
 import org.tron.trident.core.exceptions.IllegalException;
+import org.tron.trident.core.key.KeyPair;
 import org.tron.trident.core.transaction.TransactionBuilder;
 import org.tron.trident.proto.Chain;
 import org.tron.trident.proto.Response;
@@ -66,7 +68,7 @@ public class TronMultiClient {
      * @Author Jet
      * @Date 2024/4/8   17:51
      */
-    public void multiTransaction(MultiRequest request) throws IllegalException {
+    public boolean multiTransaction(MultiRequest request) throws IllegalException {
 
         //金额转化，默认为10的5次方
         long amount = BigInteger.valueOf(request.getAmount()).multiply(BigInteger.valueOf(10L).pow(5)).longValue();
@@ -75,7 +77,7 @@ public class TronMultiClient {
 
         MultiTrade.MultiValue multiValue = new MultiTrade.MultiValue(amount, request.getOwnerAddress(), request.getToAddress());
 
-        MultiTrade multiTrade = MultiTrade.grpcResultToHttp(request.getApiWrapper().signTransaction(source), request.getControllerAddress(), request.getNetWorkType(), source.getTxid().toByteArray(), multiValue);
+        MultiTrade multiTrade = MultiTrade.grpcResultToHttp(request.getApiWrapper().signTransaction(source), request.getApiWrapper().keyPair.toBase58CheckAddress(), request.getNetWorkType(), source.getTxid().toByteArray(), multiValue);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -84,6 +86,7 @@ public class TronMultiClient {
         HttpEntity<String> requestEntity = new HttpEntity<>(JSONObject.toJSONString(multiTrade), headers);
         ResponseEntity<String> response = restTemplate.postForEntity(request.getNetWorkType().getUrl(), requestEntity, String.class);
         log.warn("广播多签签名:{}", response.getBody());
+        return response.getStatusCode().is2xxSuccessful();
 
     }
 }

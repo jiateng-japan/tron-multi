@@ -70,7 +70,7 @@ public class MultiTrade implements Serializable {
             @NoArgsConstructor
             public static class Contract {
                 private String type;
-                private Parameter<Object> parameter;
+                private Parameter parameter;
 
                 @Data
                 @AllArgsConstructor
@@ -109,7 +109,7 @@ public class MultiTrade implements Serializable {
      */
     public static <T> MultiTrade grpcResultToHttp(Chain.Transaction source, String controllerAddress, NetWorkType netType, byte[] txid, T value){
         //构建参数信息
-        Transaction.RawData.Contract.Parameter parameter = new Transaction.RawData.Contract.Parameter();
+        Transaction.RawData.Contract.Parameter<T> parameter = new Transaction.RawData.Contract.Parameter<>();
         parameter.setType_url(source.getRawData().getContract(0).getParameter().getTypeUrl());
         parameter.setValue(value);
 
