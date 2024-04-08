@@ -43,7 +43,7 @@ public class TronMultiClient {
      * @Date 2024/4/8   17:51
      */
     public void multiSmartTransaction(SmartMultiRequest request) {
-        BigInteger amount = BigInteger.valueOf(request.getAmount()).multiply(BigInteger.valueOf(10L).pow(5));
+        BigInteger amount = BigInteger.valueOf(request.getAmount()).multiply(BigInteger.valueOf(10L).pow(6));
         //获取到合约信息
         Contract contract = request.getApiWrapper().getContract(request.getContractAddress());
 
@@ -68,8 +68,8 @@ public class TronMultiClient {
      */
     public boolean multiTransaction(MultiRequest request) throws IllegalException {
 
-        //金额转化，默认为10的5次方
-        long amount = BigInteger.valueOf(request.getAmount()).multiply(BigInteger.valueOf(10L).pow(5)).longValue();
+        //金额转化，默认为10的6次方
+        long amount = BigInteger.valueOf(request.getAmount()).multiply(BigInteger.valueOf(10L).pow(6)).longValue();
         //创建一笔trx的交易事件
         Response.TransactionExtention source = request.getApiWrapper().transfer(request.getOwnerAddress(), request.getToAddress(), amount);
 

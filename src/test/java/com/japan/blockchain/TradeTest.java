@@ -25,10 +25,10 @@ public class TradeTest {
     void testMultiTrx() throws IllegalException {
 
         MultiRequest multiRequest = new MultiRequest();
-        multiRequest.setApiWrapper(ApiWrapper.ofNile("7f22c659d1185b475f990e7356643a84b308d9ccdbfa68b14b7fc843d46af99d"));
+        multiRequest.setApiWrapper(ApiWrapper.ofNile("69f59bb33a04c56bc5aaa8bf0451e4be8c540cdfb32a6bc8b690885876be2945"));
         multiRequest.setNetWorkType(NetWorkType.MAIN_NET);
-        multiRequest.setOwnerAddress("TDyCdgzzq7DZWpDdh4AwZcH9FDr9ukuufC");
-        multiRequest.setToAddress("TVKVgeYpB5Vw3F4DfrXmHNZN9tLQQhVgbL");
+        multiRequest.setOwnerAddress("TWQSGmWQ4Y8cctti5Y9LZHqfedMiNe7VwR");
+        multiRequest.setToAddress("TSGrmkfFdUrjmbaFQafpzULJf3dsdR5rm8");
         multiRequest.setAmount(23L);
         TronMultiClient tronMultiClient = new TronMultiClient();
         boolean b = tronMultiClient.multiTransaction(multiRequest);

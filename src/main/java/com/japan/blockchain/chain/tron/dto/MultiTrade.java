@@ -57,10 +57,7 @@ public class MultiTrade implements Serializable {
             private Long expiration;
             private String ref_block_bytes;
             private String ref_block_hash;
-
-            @JsonInclude(JsonInclude.Include.NON_NULL)
             private Long fee_limit;
-
             private Long timestamp;
             private List<Contract> contract;
 
@@ -122,6 +119,7 @@ public class MultiTrade implements Serializable {
         Transaction.RawData rawData = new Transaction.RawData();
         rawData.setRef_block_bytes(Hex.toHexString(source.getRawData().getRefBlockBytes().toByteArray()));
         rawData.setRef_block_hash(Hex.toHexString(source.getRawData().getRefBlockHash().toByteArray()));
+        rawData.setFee_limit(source.getRawData().getFeeLimit());
         rawData.setExpiration(source.getRawData().getExpiration());
         rawData.setTimestamp(source.getRawData().getTimestamp());
         ArrayList<Transaction.RawData.Contract> contractArrayList = new ArrayList<>();
