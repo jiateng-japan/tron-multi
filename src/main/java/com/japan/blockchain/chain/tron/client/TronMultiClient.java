@@ -57,7 +57,7 @@ public class TronMultiClient {
                 new MultiTrade.SmartMultiValue(request.getContractAddress(), FunctionEncoder.encode(transfer), request.getOwnerAddress());
         Chain.Transaction signedTxn = trc20Contract.getWrapper().signTransaction(builder.build());
         MultiTrade multiTrade = MultiTrade.grpcResultToHttp(signedTxn, request.getApiWrapper().keyPair.toBase58CheckAddress(), request.getNetWorkType(), smartMultiValue);
-        log.info("智能合约多签交易对象：{}", JSONObject.toJSONString(multiTrade));
+        log.debug("智能合约多签交易对象：{}", JSONObject.toJSONString(multiTrade));
         return broadMultiTransaction(request.getNetWorkType().getUrl(), multiTrade);
 
     }
@@ -96,7 +96,7 @@ public class TronMultiClient {
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> requestEntity = new HttpEntity<>(JSONObject.toJSONString(multiTrade), headers);
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
-        log.info("多签广播交易:{}", response);
+        log.debug("多签广播交易:{}", response);
         if (response.getStatusCode().is2xxSuccessful()) {
             if ("success".equals(JSONObject.parseObject(response.getBody()).getString("message"))) {
                 return true;

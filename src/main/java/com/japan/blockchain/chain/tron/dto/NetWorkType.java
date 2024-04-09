@@ -14,6 +14,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum NetWorkType {
 
+    /**
+    * nile测试网
+    */
     MAIN_NET("main_net","https://niletest.tronlink.org/api/wallet/multi/transaction?serializable=true"),;
 
 

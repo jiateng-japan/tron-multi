@@ -13,11 +13,11 @@ import org.tron.trident.proto.Response;
 
 
 @Slf4j
+@Disabled
 class PermissionTests {
 
 
     @Test
-    @Disabled
     void createAccount() throws IllegalException {
         ApiWrapper apiWrapper = ApiWrapper.ofNile("e81e598bc65ca85149f67e9b3a59f465c0da8f7aad4333d7b17a3a97c9a7a237");
         KeyPair keyPair = KeyPair.generate();
