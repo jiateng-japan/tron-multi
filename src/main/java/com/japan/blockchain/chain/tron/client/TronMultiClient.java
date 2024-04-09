@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import org.tron.trident.abi.FunctionEncoder;
 import org.tron.trident.abi.TypeReference;
 import org.tron.trident.abi.datatypes.Address;
 import org.tron.trident.abi.datatypes.Bool;
@@ -42,21 +43,22 @@ public class TronMultiClient {
      * @Author Jet
      * @Date 2024/4/8   17:51
      */
-    public void multiSmartTransaction(SmartMultiRequest request) {
+    public boolean multiSmartTransaction(SmartMultiRequest request) {
         BigInteger amount = BigInteger.valueOf(request.getAmount()).multiply(BigInteger.valueOf(10L).pow(6));
         //获取到合约信息
         Contract contract = request.getApiWrapper().getContract(request.getContractAddress());
 
         Trc20Contract trc20Contract = new Trc20Contract(contract, request.getOwnerAddress(), request.getApiWrapper());
-        Function transfer = new Function("transfer",
-                Arrays.asList(new Address(request.getToAddress()),
-                        new Uint256(amount)),
-                Arrays.asList(new TypeReference<Bool>() {
-                }));
+        Function transfer = new Function("transfer", Arrays.asList(new Address(request.getToAddress()), new Uint256(amount)), Arrays.asList(new TypeReference<Bool>() {
+        }));
         TransactionBuilder builder = trc20Contract.getWrapper().triggerCall(Base58Check.bytesToBase58(trc20Contract.getOwnerAddr().toByteArray()), Base58Check.bytesToBase58(trc20Contract.getCntrAddr().toByteArray()), transfer);
         builder.setFeeLimit(100000000L);
+        MultiTrade.SmartMultiValue smartMultiValue =
+                new MultiTrade.SmartMultiValue(request.getContractAddress(), FunctionEncoder.encode(transfer), request.getOwnerAddress());
         Chain.Transaction signedTxn = trc20Contract.getWrapper().signTransaction(builder.build());
-        log.warn("发起只能合约交易:{}", signedTxn);
+        MultiTrade multiTrade = MultiTrade.grpcResultToHttp(signedTxn, request.getApiWrapper().keyPair.toBase58CheckAddress(), request.getNetWorkType(), smartMultiValue);
+        log.info("智能合约多签交易对象：{}", JSONObject.toJSONString(multiTrade));
+        return broadMultiTransaction(request.getNetWorkType().getUrl(), multiTrade);
 
     }
 
@@ -75,16 +77,35 @@ public class TronMultiClient {
 
         MultiTrade.MultiValue multiValue = new MultiTrade.MultiValue(amount, request.getOwnerAddress(), request.getToAddress());
 
-        MultiTrade multiTrade = MultiTrade.grpcResultToHttp(request.getApiWrapper().signTransaction(source), request.getApiWrapper().keyPair.toBase58CheckAddress(), request.getNetWorkType(), source.getTxid().toByteArray(), multiValue);
+        MultiTrade multiTrade = MultiTrade.grpcResultToHttp(request.getApiWrapper().signTransaction(source), request.getApiWrapper().keyPair.toBase58CheckAddress(), request.getNetWorkType(), multiValue);
+        log.debug("TRX多签交易对象：{}", JSONObject.toJSONString(multiTrade));
+        return broadMultiTransaction(request.getNetWorkType().getUrl(), multiTrade);
 
+    }
+
+
+    /**
+     * @Description Http调用多签广播交易
+     * @Author Jet
+     * @Date 2024/4/9   10:48
+     */
+    private boolean broadMultiTransaction(String url, MultiTrade multiTrade) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
 
         RestTemplate restTemplate = new RestTemplate();
         HttpEntity<String> requestEntity = new HttpEntity<>(JSONObject.toJSONString(multiTrade), headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(request.getNetWorkType().getUrl(), requestEntity, String.class);
-        log.warn("广播多签签名:{}", response.getBody());
-        return response.getStatusCode().is2xxSuccessful();
-
+        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+        log.info("多签广播交易:{}", response);
+        if (response.getStatusCode().is2xxSuccessful()) {
+            if ("success".equals(JSONObject.parseObject(response.getBody()).getString("message"))) {
+                return true;
+            } else {
+                log.error("多签广播链上交易失败：{}", response.getBody());
+                return false;
+            }
+        } else {
+            throw new RuntimeException("多签广播连上交易发生网络异常");
+        }
     }
 }

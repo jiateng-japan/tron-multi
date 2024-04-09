@@ -21,18 +21,18 @@ import org.tron.trident.core.exceptions.IllegalException;
 public class TradeTest {
 
     @Test
-    //@Disabled
+        //@Disabled
     void testMultiTrx() throws IllegalException {
 
         MultiRequest multiRequest = new MultiRequest();
-        multiRequest.setApiWrapper(ApiWrapper.ofNile("69f59bb33a04c56bc5aaa8bf0451e4be8c540cdfb32a6bc8b690885876be2945"));
+        multiRequest.setApiWrapper(ApiWrapper.ofNile("7f22c659d1185b475f990e7356643a84b308d9ccdbfa68b14b7fc843d46af99d"));
         multiRequest.setNetWorkType(NetWorkType.MAIN_NET);
-        multiRequest.setOwnerAddress("TWQSGmWQ4Y8cctti5Y9LZHqfedMiNe7VwR");
-        multiRequest.setToAddress("TSGrmkfFdUrjmbaFQafpzULJf3dsdR5rm8");
-        multiRequest.setAmount(23L);
+        multiRequest.setOwnerAddress("TDyCdgzzq7DZWpDdh4AwZcH9FDr9ukuufC");
+        multiRequest.setToAddress("TVKVgeYpB5Vw3F4DfrXmHNZN9tLQQhVgbL");
+        multiRequest.setAmount(33L);
         TronMultiClient tronMultiClient = new TronMultiClient();
         boolean b = tronMultiClient.multiTransaction(multiRequest);
-        log.debug("trx 多签广播交易结果：{}",b);
+        log.info("trx 多签广播交易结果：{}", b);
 
     }
 
@@ -46,9 +46,10 @@ public class TradeTest {
         multiRequest.setContractAddress("TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj");
         multiRequest.setOwnerAddress("TDyCdgzzq7DZWpDdh4AwZcH9FDr9ukuufC");
         multiRequest.setToAddress("TVKVgeYpB5Vw3F4DfrXmHNZN9tLQQhVgbL");
-        multiRequest.setAmount(24L);
+        multiRequest.setAmount(21L);
         TronMultiClient tronMultiClient = new TronMultiClient();
-        tronMultiClient.multiSmartTransaction(multiRequest);
+        boolean b = tronMultiClient.multiSmartTransaction(multiRequest);
+        log.info("智能合约多签广播交易结果：{}", b);
 
     }
 

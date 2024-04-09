@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.bouncycastle.util.encoders.Hex;
+import org.tron.trident.core.ApiWrapper;
 import org.tron.trident.proto.Chain;
 
 import java.io.Serial;
@@ -104,7 +105,7 @@ public class MultiTrade implements Serializable {
      * @Author Jet
      * @Date 2024/4/8   13:26
      */
-    public static <T> MultiTrade grpcResultToHttp(Chain.Transaction source, String controllerAddress, NetWorkType netType, byte[] txid, T value){
+    public static <T> MultiTrade grpcResultToHttp(Chain.Transaction source, String controllerAddress, NetWorkType netType, T value) {
         //构建参数信息
         Transaction.RawData.Contract.Parameter<T> parameter = new Transaction.RawData.Contract.Parameter<>();
         parameter.setType_url(source.getRawData().getContract(0).getParameter().getTypeUrl());
@@ -128,7 +129,7 @@ public class MultiTrade implements Serializable {
 
         //构建交易信息
         Transaction transaction = new Transaction();
-        transaction.setTxID(Hex.toHexString(txid));
+        transaction.setTxID(Hex.toHexString(ApiWrapper.calculateTransactionHash(source)));
         transaction.setRaw_data(rawData);
         transaction.setRaw_data_hex(Hex.toHexString(source.getRawData().toByteArray()));
         List<String> signList = new ArrayList<>(1);
@@ -137,6 +138,10 @@ public class MultiTrade implements Serializable {
         //构建多签信息
         MultiTrade result = new MultiTrade(controllerAddress, netType.getName());
         result.setTransaction(transaction);
+        //判定智能合约
+        if (value instanceof SmartMultiValue) {
+            result.setFunctionSelector("transfer(address,uint256)");
+        }
         return result;
     }
 
