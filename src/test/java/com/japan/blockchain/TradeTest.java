@@ -41,13 +41,12 @@ public class TradeTest {
     @Test
     void tradeMultiUSDTTest() {
         SmartMultiRequest multiRequest = new SmartMultiRequest();
-        ApiWrapper apiWrapper = new ApiWrapper("35.181.172.154:50051","35.181.172.154:50061","7f22c659d1185b475f990e7356643a84b308d9ccdbfa68b14b7fc843d46af99d");
-        multiRequest.setApiWrapper(apiWrapper);
+        multiRequest.setApiWrapper(ApiWrapper.ofNile("2e3f0add9e1544542984d2f6db585601010d588eff4976f4775e514699e0b3a9"));
         multiRequest.setNetWorkType(NetWorkType.MAIN_NET);
         multiRequest.setContractAddress("TXLAQ63Xg1NAzckPwKHvzw7CSEmLMEqcdj");
-        multiRequest.setOwnerAddress("TDyCdgzzq7DZWpDdh4AwZcH9FDr9ukuufC");
-        multiRequest.setToAddress("TVKVgeYpB5Vw3F4DfrXmHNZN9tLQQhVgbL");
-        multiRequest.setAmount(9L);
+        multiRequest.setOwnerAddress("TWQSGmWQ4Y8cctti5Y9LZHqfedMiNe7VwR");
+        multiRequest.setToAddress("TSGrmkfFdUrjmbaFQafpzULJf3dsdR5rm8");
+        multiRequest.setAmount(19L);
         TronMultiClient tronMultiClient = new TronMultiClient();
         boolean b = tronMultiClient.multiSmartTransaction(multiRequest);
         log.debug("智能合约多签广播交易结果：{}", b);
